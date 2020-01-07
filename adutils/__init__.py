@@ -3,8 +3,18 @@
   @benleb / https://github.com/benleb/adutils
 """
 
+from datetime import datetime, timedelta, timezone
 from pprint import pformat
 from typing import Any, Dict, Iterable, Optional, Union
+
+
+def hl(text: Union[int, float, str]) -> str:
+    return f"\033[1m{text}\033[0m"
+
+
+def hl_entity(entity: str) -> str:
+    domain, entity = entity.split(".")
+    return f"{domain}.{hl(entity)}"
 
 
 class ADutils:
@@ -33,7 +43,7 @@ class ADutils:
         return self._name
 
     def log(
-        self, msg: str, icon: Optional[str] = None, *args: Any, **kwargs: Any
+        self, msg: str, *args: Any, icon: Optional[str] = None, **kwargs: Any
     ) -> None:
 
         kwargs.setdefault("ascii_encode", False)
@@ -44,19 +54,16 @@ class ADutils:
 
         message = f"{f'{icon} ' if icon else ' '}{msg}"
 
-        try:
-            self.ad.log(message, *args, **kwargs)
-        except Exception as error:
-            print(f"Oh shit! Writing to AD logger failed: {error}")
+        self.ad.log(message, *args, **kwargs)
 
     def show_info(self) -> None:
         # check if a room is given
         room = ""
         if "room" in self.config:
-            room = f" - \033[1m{self.config['room'].capitalize()}\033[0m"
+            room = f" - {hl(self.config['room'].capitalize())}"
 
         self.log("")
-        self.log(f"\033[1m{self.name}\033[0m{room}", icon=self.icon)
+        self.log(f"{hl(self.name)}{room}", icon=self.icon)
         self.log("")
 
         listeners = self.config.pop("listeners", None)
@@ -77,7 +84,7 @@ class ADutils:
         if listeners:
             self.log(f"  event listeners:")
             for listener in sorted(listeners):
-                self.log(f"    - \033[1m{listener}\033[0m")
+                self.log(f"    - {hl(listener)}")
 
         self.log("")
 
@@ -95,22 +102,39 @@ class ADutils:
                 if "name" in item:
                     self.print_collection(item.pop("name", ""), item, indentation)
                 else:
-                    self.log(f"{indent}\033[1m{pformat(item, compact=True)}\033[0m")
+                    self.log(f"{indent}{hl(pformat(item, compact=True))}")
 
             elif isinstance(collection, dict):
                 self._print_cfg_setting(item, collection[item], indentation)
 
             else:
-                self.log(f"{indent}- \033[1m{item}\033[0m")
+                self.log(f"{indent}- {hl(item)}")
 
     @staticmethod
-    def hl(text: str) -> str:
-        return f"\033[1m{text}\033[0m"
+    def hl(text: Union[int, float, str]) -> str:
+        return hl(text)
 
     @staticmethod
     def hl_entity(entity: str) -> str:
-        domain, entity = entity.split(".")
-        return f"{domain}.{ADutils.hl(entity)}"
+        return hl_entity(entity)
+
+    async def get_timezone(self) -> timezone:
+        return timezone(
+            timedelta(minutes=self.ad.get_tz_offset()), name=self.ad.get_timezone()
+        )
+
+    async def last_update(self, entity: str) -> Any:
+        lu_date, lu_time = await self.to_localtime(entity, "last_updated")
+        last_updated = str(lu_time.strftime("%H:%M:%S"))
+        if lu_date != await self.ad.date():
+            last_updated = f"{last_updated} ({lu_date.strftime('%Y-%m-%d')})"
+        return last_updated
+
+    async def to_localtime(self, entity: str, attribute: str) -> Any:
+        attributes = await self.ad.get_state(entity_id=entity, attribute="all")
+        time_utc = datetime.fromisoformat(attributes[attribute])
+        time_local = time_utc.astimezone(await self.get_timezone())
+        return (time_local.date(), time_local.time())
 
     def _print_cfg_setting(
         self, key: str, value: Union[int, str], indentation: int
@@ -123,8 +147,7 @@ class ADutils:
             unit = "min"
             min_value = f"{int(value / 60)}:{int(value % 60):02d}"
             self.log(
-                f"{indent}{key}: {prefix}\033[1m{min_value}\033[0m{unit} ≈ "
-                f"\033[1m{value}\033[0msec"
+                f"{indent}{key}: {prefix}{hl(min_value)}{unit} ≈ " f"{hl(value)}sec"
             )
 
         else:
@@ -133,4 +156,4 @@ class ADutils:
             if "_prefixes" in self.config and key in self.config["_prefixes"]:
                 prefix = self.config["_prefixes"][key]
 
-            self.log(f"{indent}{key}: {prefix}\033[1m{value}\033[0m{unit}")
+            self.log(f"{indent}{key}: {prefix}{hl(value)}{unit}")
