@@ -3,6 +3,7 @@
 from setuptools import setup
 
 setup(name='adutils',
+      version='0.4.8',
       license='MIT',
       url='http://github.com/benleb/adutils',
       author='Ben Lebherz',
