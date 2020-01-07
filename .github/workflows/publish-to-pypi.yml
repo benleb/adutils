@@ -8,8 +8,6 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@master
-    - run: |
-        git fetch --prune --unshallow
     - name: Set up Python 3.8
       uses: actions/setup-python@v1
       with:
@@ -28,18 +26,14 @@ jobs:
         --binary
         --out-dir dist/
         .
-    - name: Publish distribution 📦 to PyPI
-      if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
-      uses: pypa/gh-action-pypi-publish@master
-      with:
-        password: ${{ secrets.pypi_password }}
-    # - name: Put SHA in version-number
-    #   run: >-
-    #     sed -i 's/${{ github.ref }}/${{ github.ref }}-${{ github.sha }}' setup.py
-    #     sed -i 's/${{ github.ref }}/${{ github.ref }}-${{ github.sha }}' pyproject.toml
     - name: Publish package 📦 to TestPyPI
       uses: pypa/gh-action-pypi-publish@master
       with:
         user: __token__
         password: ${{ secrets.test_pypi_password }}
         repository_url: https://test.pypi.org/legacy/
+    - name: Publish distribution 📦 to PyPI
+      if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+      uses: pypa/gh-action-pypi-publish@master
+      with:
+        password: ${{ secrets.pypi_password }}
