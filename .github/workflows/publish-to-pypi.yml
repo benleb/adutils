@@ -31,11 +31,10 @@ jobs:
       uses: pypa/gh-action-pypi-publish@master
       with:
         password: ${{ secrets.pypi_password }}
-    - uses: actions/checkout@v2
-    - name: Put SHA in version-number
-      run: >-
-        sed -i 's/${{ github.ref }}/${{ github.ref }}-${{ github.sha }}' setup.py
-        sed -i 's/${{ github.ref }}/${{ github.ref }}-${{ github.sha }}' pyproject.toml
+    # - name: Put SHA in version-number
+    #   run: >-
+    #     sed -i 's/${{ github.ref }}/${{ github.ref }}-${{ github.sha }}' setup.py
+    #     sed -i 's/${{ github.ref }}/${{ github.ref }}-${{ github.sha }}' pyproject.toml
     - name: Build a binary wheel and a source tarball
       run: >-
         python -m

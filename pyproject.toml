@@ -1,13 +1,13 @@
 [project]
 name = "adutils"
-version = "0.4.8"
+# version = "0.4.8"
 description = "Helper and utilities for AppDaemon apps."
 authors = [
     "Ben Lebherz <git@benleb.de>"
 ]
 license = "MIT"
 readme = "README.md"
-python = "^3.7"
+python = "^3.8"
 homepage = "https://github.com/benleb/adutils"
 repository = "https://github.com/benleb/adutils"
 documentation = "https://github.com/benleb/adutils"
@@ -30,9 +30,10 @@ classifiers = [
 [dev-dependencies]
 
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools>=42", "wheel", "setuptools_scm[toml]>=3.4"]
 build-backend = "setuptools.build_meta"
 
+[tools.setuptools_scm]
 
 [tool.black]
 line-length = 88
