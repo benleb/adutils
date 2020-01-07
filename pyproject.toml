@@ -7,7 +7,7 @@ authors = [
 ]
 license = "MIT"
 readme = "README.md"
-python = "^3.7"
+python = "^3.8"
 homepage = "https://github.com/benleb/adutils"
 repository = "https://github.com/benleb/adutils"
 documentation = "https://github.com/benleb/adutils"
@@ -30,7 +30,7 @@ classifiers = [
 [dev-dependencies]
 
 [build-system]
-requires = ["setuptools>=42", "wheel", "setuptools_scm[toml]>=3.4"]
+requires = ["setuptools>=42", "wheel", "setuptools_scm[toml]>=3.3.3"]
 build-backend = "setuptools.build_meta"
 
 [tools.setuptools_scm]
