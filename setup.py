@@ -14,7 +14,7 @@ setup(name='adutils',
       packages=['adutils'],
       zip_safe=False,
       platforms='any',
-      use_scm_version=True,
+      use_scm_version={'version_scheme': 'python-simplified-semver'},
       setup_requires=['setuptools_scm'],
       classifiers=[
           "Topic :: Software Development",
