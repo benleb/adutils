@@ -5,8 +5,9 @@
 Helper functions for AppDaemon apps. Currently there is just code, no documentation. Sorry ¯\\_(ツ)_/¯
 
 ## Install
+
 ```bash
-$ pip install adutils
+pip install adutils
 ```
 
 ## Apps using **adutils**
