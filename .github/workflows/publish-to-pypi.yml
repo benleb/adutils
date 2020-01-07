@@ -35,14 +35,6 @@ jobs:
     #   run: >-
     #     sed -i 's/${{ github.ref }}/${{ github.ref }}-${{ github.sha }}' setup.py
     #     sed -i 's/${{ github.ref }}/${{ github.ref }}-${{ github.sha }}' pyproject.toml
-    - name: Build a binary wheel and a source tarball
-      run: >-
-        python -m
-        pep517.build
-        --source
-        --binary
-        --out-dir dist/
-        .
     - name: Publish package 📦 to TestPyPI
       uses: pypa/gh-action-pypi-publish@master
       with:
