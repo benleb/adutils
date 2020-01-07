@@ -26,14 +26,27 @@ jobs:
         --binary
         --out-dir dist/
         .
+    - name: Publish distribution 📦 to PyPI
+      if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+      uses: pypa/gh-action-pypi-publish@master
+      with:
+        password: ${{ secrets.pypi_password }}
+    - name: Put SHA in version-number
+      uses: actions/checkout@v2
+      run: >-
+        sed -i 's/${{ github.ref }}/${{ github.ref }}-${{ github.sha }}' setup.py
+        sed -i 's/${{ github.ref }}/${{ github.ref }}-${{ github.sha }}' pyproject.toml
+    - name: Build a binary wheel and a source tarball
+      run: >-
+        python -m
+        pep517.build
+        --source
+        --binary
+        --out-dir dist/
+        .
     - name: Publish package 📦 to TestPyPI
       uses: pypa/gh-action-pypi-publish@master
       with:
         user: __token__
         password: ${{ secrets.test_pypi_password }}
         repository_url: https://test.pypi.org/legacy/
-    - name: Publish distribution 📦 to PyPI
-      if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
-      uses: pypa/gh-action-pypi-publish@master
-      with:
-        password: ${{ secrets.pypi_password }}
