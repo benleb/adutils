@@ -34,6 +34,7 @@ requires = ["setuptools>=42", "wheel", "setuptools_scm[toml]"]
 build-backend = "setuptools.build_meta"
 
 [tools.setuptools_scm]
+version_scheme = "python-simplified-semver"
 
 [tool.black]
 line-length = 88
