@@ -31,8 +31,8 @@ jobs:
       uses: pypa/gh-action-pypi-publish@master
       with:
         password: ${{ secrets.pypi_password }}
+    - uses: actions/checkout@v2
     - name: Put SHA in version-number
-      uses: actions/checkout@v2
       run: >-
         sed -i 's/${{ github.ref }}/${{ github.ref }}-${{ github.sha }}' setup.py
         sed -i 's/${{ github.ref }}/${{ github.ref }}-${{ github.sha }}' pyproject.toml
