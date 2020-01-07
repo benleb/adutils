@@ -30,7 +30,7 @@ classifiers = [
 [dev-dependencies]
 
 [build-system]
-requires = ["setuptools>=42", "wheel", "setuptools_scm[toml]>=3.3.3"]
+requires = ["setuptools>=42", "wheel", "setuptools_scm[toml]"]
 build-backend = "setuptools.build_meta"
 
 [tools.setuptools_scm]
