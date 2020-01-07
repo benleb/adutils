@@ -24,7 +24,7 @@ jobs:
         pep517.build
         --source
         --binary
-        --out-dir dist/
+        --out-dir test_dist/
         .
     - name: Publish package 📦 to TestPyPI
       uses: pypa/gh-action-pypi-publish@master
