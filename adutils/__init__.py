@@ -43,7 +43,7 @@ class ADutils:
         return self._name
 
     def log(
-        self, msg: str, *args: Any, icon: Optional[str] = None, **kwargs: Any
+        self, msg: str, icon: Optional[str] = None, *args: Any, **kwargs: Any
     ) -> None:
 
         kwargs.setdefault("ascii_encode", False)
