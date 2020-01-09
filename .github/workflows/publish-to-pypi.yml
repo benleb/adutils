@@ -8,6 +8,10 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@master
+    - name: Fetch tags
+      run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+    - run: |
+        git fetch --prune --unshallow
     - name: Set up Python 3.8
       uses: actions/setup-python@v1
       with:
@@ -18,9 +22,6 @@ jobs:
         pip install
         pep517
         --user
-    - uses: actions/checkout@v2
-    - name: Fetch tags
-      run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
     - name: Build a binary wheel and a source tarball
       env:
         SETUPTOOLS_SCM_DEBUG: 1
