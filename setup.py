@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(name='adutils',
-      version='0.4.9',
+      # version='0.4.9',
       license='MIT',
       url='http://github.com/benleb/adutils',
       author='Ben Lebherz',
@@ -15,7 +15,7 @@ setup(name='adutils',
       zip_safe=False,
       platforms='any',
       setup_requires=['setuptools_scm'],
-      # use_scm_version={'version_scheme': 'python-simplified-semver'},
+      use_scm_version={'version_scheme': 'python-simplified-semver'},
       classifiers=[
           "Topic :: Software Development",
           "Intended Audience :: Developers",

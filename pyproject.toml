@@ -24,17 +24,17 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
-# Requirements
 [dependencies]
 
 [dev-dependencies]
 
 [build-system]
-requires = ["setuptools>=42", "wheel", "setuptools_scm[toml]"]
+requires = ["setuptools>=42", "wheel", "setuptools_scm"]
 build-backend = "setuptools.build_meta"
 
 [tools.setuptools_scm]
 version_scheme = "python-simplified-semver"
+write_to = "adutils/version.py"
 
 [tool.black]
 line-length = 88
