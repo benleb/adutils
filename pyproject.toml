@@ -32,6 +32,7 @@ build-backend = "setuptools.build_meta"
 
 [tools.setuptools_scm]
 version_scheme = "python-simplified-semver"
+local_scheme = 'lambda v: ""'
 
 [tool.black]
 line-length = 88
