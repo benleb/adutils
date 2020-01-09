@@ -10,9 +10,9 @@ jobs:
     - uses: actions/checkout@master
 
     - name: Fetch tags
-      run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
-    - name: Unshallow
-      run: git fetch --prune --unshallow
+      run: git fetch --prune --unshallow --depth=1 origin +refs/tags/*:refs/tags/*
+    # - name: Unshallow
+    #   run: git fetch --prune --unshallow
 
     - name: Set up Python 3.8
       uses: actions/setup-python@v1
