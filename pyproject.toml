@@ -2,9 +2,7 @@
 name = "adutils"
 version = "0.4.9"
 description = "Helper and utilities for AppDaemon apps."
-authors = [
-    "Ben Lebherz <git@benleb.de>"
-]
+authors = ["Ben Lebherz <git@benleb.de>"]
 license = "MIT"
 readme = "README.md"
 python = "^3.8"
