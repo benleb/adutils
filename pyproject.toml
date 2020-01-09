@@ -32,7 +32,6 @@ build-backend = "setuptools.build_meta"
 
 [tools.setuptools_scm]
 version_scheme = "python-simplified-semver"
-write_to = "adutils/version.py"
 
 [tool.black]
 line-length = 88

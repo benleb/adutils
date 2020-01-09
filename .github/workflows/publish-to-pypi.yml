@@ -18,6 +18,8 @@ jobs:
         pip install
         pep517
         --user
+    - name: Fetch tags
+      run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
     - name: Build a binary wheel and a source tarball
       env:
         SETUPTOOLS_SCM_DEBUG: 1
