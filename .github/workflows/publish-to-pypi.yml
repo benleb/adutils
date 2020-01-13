@@ -18,6 +18,8 @@ jobs:
 
       - name: Black Code Formatter
         uses: lgeiger/black-action@master
+        with:
+          args: "--check --target-version py38 ."
 
       - name: 🏗️ Install pep517
         run: python -m pip install pep517 --user
