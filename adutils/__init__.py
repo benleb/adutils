@@ -6,6 +6,7 @@ __version__ = "0.4.9"
 
 from datetime import datetime, timedelta, timezone
 from pprint import pformat
+from sys import version_info
 from typing import Any, Dict, Iterable, Optional, Union
 
 
@@ -16,6 +17,12 @@ def hl(text: Union[int, float, str]) -> str:
 def hl_entity(entity: str) -> str:
     domain, entity = entity.split(".")
     return f"{domain}.{hl(entity)}"
+
+
+# version checks
+py3_or_higher = version_info.major >= 3
+py37_or_higher = py3_or_higher and version_info.minor >= 7
+py38_or_higher = py3_or_higher and version_info.minor >= 8
 
 
 class ADutils:
