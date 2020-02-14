@@ -9,6 +9,8 @@ from pprint import pformat
 from sys import version_info
 from typing import Any, Dict, Iterable, Optional, Union
 
+from appdaemon.appdaemon import AppDaemon
+
 
 def hl(text: Union[int, float, str]) -> str:
     return f"\033[1m{text}\033[0m"
@@ -29,26 +31,31 @@ class ADutils:
     def __init__(
         self,
         name: str,
-        config: Dict[str, Any],
+        config: Dict[str, Any] = {},
+        ad: AppDaemon = None,
         icon: Optional[str] = None,
-        ad: Any = None,
         show_config: bool = False,
     ) -> None:
-        self._name = name
-        self.icon = icon
-        self.config = config
+        self.name = name
         self.ad = ad
+        self.config = config
+        self.icon = icon
 
-        if show_config:
+        if self.appdaemon_v3:
+            warn = {"icon": "‼️", "level": "WARNING"}
+            self.log(f"", **warn)
+            self.log(f"  please {hl(f'update to AppDaemon >=4.x')}!", **warn)
+            self.log(f"  support for AppDaemon <4.x will be removed", **warn)
+            self.log(f"", **warn)
+            self.log(f"    info: https://github.com/home-assistant/appdaemon", **warn)
+            self.log(f"", **warn)
+
+        if show_config and self.config:
             self.show_info()
 
     @property
     def appdaemon_v3(self) -> bool:
         return bool(int(self.ad.get_ad_version()[0]) < 4)
-
-    @property
-    def name(self) -> str:
-        return self._name
 
     def log(
         self, msg: str, icon: Optional[str] = None, *args: Any, **kwargs: Any
@@ -64,8 +71,15 @@ class ADutils:
 
         self.ad.log(message, *args, **kwargs)
 
-    def show_info(self) -> None:
+    def show_info(self, config: Optional[Dict[str, Any]] = None) -> None:
         # check if a room is given
+        if config:
+            self.config = config
+
+        if not self.config:
+            self.log(f"no configuration available", icon="‼️", level="ERROR")
+            return
+
         room = ""
         if "room" in self.config:
             room = f" - {hl(self.config['room'].capitalize())}"
