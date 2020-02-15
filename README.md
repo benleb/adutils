@@ -1,6 +1,6 @@
 # adutils
 
-![PyPI](https://img.shields.io/pypi/v/adutils) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/adutils) ![PyPI - Downloads](https://img.shields.io/pypi/dm/adutils)
+[![PyPI](https://img.shields.io/pypi/v/adutils)](https://pypi.org/project/adutils/) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/adutils)](https://pypi.org/project/adutils/) [![PyPI - Downloads](https://img.shields.io/pypi/dm/adutils)](https://pypi.org/project/adutils/)
 
 Helper functions for AppDaemon apps. Currently there is just code, no documentation. Sorry ¯\\_(ツ)_/¯
 
