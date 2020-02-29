@@ -12,10 +12,16 @@ from typing import Any, Dict, Iterable, Optional, Union
 from appdaemon.appdaemon import AppDaemon
 
 
+SECONDS_PER_MIN: int = 60
+LOGGING_INTERVAL: int = 60
+
+
 # version checks
 py3_or_higher = version_info.major >= 3
 py37_or_higher = py3_or_higher and version_info.minor >= 7
 py38_or_higher = py3_or_higher and version_info.minor >= 8
+
+
 def hl(text: Union[int, float, str]) -> str:
     return f"\033[1m{text}\033[0m"
 
@@ -25,10 +31,20 @@ def hl_entity(entity: str) -> str:
     return f"{domain}.{hl(entity)}"
 
 
-# version checks
-py3_or_higher = version_info.major >= 3
-py37_or_higher = py3_or_higher and version_info.minor >= 7
-py38_or_higher = py3_or_higher and version_info.minor >= 8
+async def get_timestring(last_changed: datetime) -> str:
+    # exact state-change time but not relative/readable time
+    last_changed = datetime.fromisoformat(str(last_changed))
+
+    # calculate timedelta
+    opened_ago = datetime.now().astimezone() - last_changed.astimezone()
+
+    # append suitable unit
+    if opened_ago.seconds >= SECONDS_PER_MIN:
+        open_since = f"{int(opened_ago.seconds / SECONDS_PER_MIN)}min"
+    else:
+        open_since = f"{int(opened_ago.seconds)}sec"
+
+    return open_since
 
 
 class ADutils:
