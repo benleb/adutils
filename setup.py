@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name="adutils",
-    # version='0.4.11',
+    # version='0.4.12',
     license="MIT",
     url="http://github.com/benleb/adutils",
     author="Ben Lebherz",

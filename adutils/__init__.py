@@ -2,7 +2,7 @@
 
   @benleb / https://github.com/benleb/adutils
 """
-__version__ = "0.4.11"
+__version__ = "0.4.12"
 
 from datetime import datetime, timedelta, timezone
 from pprint import pformat
