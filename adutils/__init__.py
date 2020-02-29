@@ -12,6 +12,10 @@ from typing import Any, Dict, Iterable, Optional, Union
 from appdaemon.appdaemon import AppDaemon
 
 
+# version checks
+py3_or_higher = version_info.major >= 3
+py37_or_higher = py3_or_higher and version_info.minor >= 7
+py38_or_higher = py3_or_higher and version_info.minor >= 8
 def hl(text: Union[int, float, str]) -> str:
     return f"\033[1m{text}\033[0m"
 
