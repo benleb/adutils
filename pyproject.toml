@@ -1,45 +1,53 @@
-[project]
+[tool.poetry]
 name = "adutils"
-version = "0.4.12"
+version = "0.5.0-alpha.3"
 description = "Helper and utilities for AppDaemon apps."
 authors = ["Ben Lebherz <git@benleb.de>"]
 license = "MIT"
 readme = "README.md"
-python = "^3.8"
 homepage = "https://github.com/benleb/adutils"
 repository = "https://github.com/benleb/adutils"
 documentation = "https://github.com/benleb/adutils"
-
-keywords = ["appdaemon", "app"]
+keywords = ["ad-apps", "appdaemon", "app"]
 
 classifiers = [
     "Topic :: Software Development",
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
-[dependencies]
+[tool.poetry.dependencies]
+python = ">=3.8"
 
-[dev-dependencies]
+[tool.poetry.dev-dependencies]
+# pytest = "^5.2"
 
 [build-system]
-requires = ["setuptools>=42", "wheel", "setuptools_scm"]
-build-backend = "setuptools.build_meta"
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
 
-[tools.setuptools_scm]
-version_scheme = "python-simplified-semver"
-local_scheme = 'lambda v: ""'
+[tool.isort]
+balanced_wrapping = true
+combine_as_imports = true
+combine_star = true
+line_length = 120
+lines_after_imports = 2
+lines_between_types = 1
+order_by_type = true
+use_parentheses = true
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
 
 [tool.black]
-line-length = 88
-target_version = ["py38"]
+line-length = 120
+target_version = ["py39"]
 include = '\.pyi?$'
 exclude = '''
-
 (
   /(
       \.eggs         # exclude a few common directories in the
@@ -55,3 +63,11 @@ exclude = '''
   )/
 )
 '''
+
+[tool.dephell.main]
+# read from poetry format
+from = {format = "poetry", path = "pyproject.toml"}
+# drop dev-dependencies
+envs = ["main"]
+# and convert into setup.py
+to = {format = "setuppy", path = "setup.py"}
