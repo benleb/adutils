@@ -3,21 +3,22 @@
   @benleb / https://github.com/benleb/adutils
 """
 
-from datetime import datetime, timedelta, timezone
+# from datetime import datetime, timedelta, timezone
 from importlib.metadata import version
-from pprint import pformat
 from sys import version_info
-from typing import Any, Dict, Iterable, Optional, Union
+from typing import Any, Dict, Optional, Union, Set
 
 from appdaemon.appdaemon import AppDaemon
+from statistics import fmean
 
 
 __version__ = version(__name__)
 
 # version checks
 py3_or_higher = version_info.major >= 3
+py37_or_higher = py3_or_higher and version_info.minor >= 7
 py38_or_higher = py3_or_higher and version_info.minor >= 8
-py38_or_higher = py3_or_higher and version_info.minor >= 9
+py39_or_higher = py3_or_higher and version_info.minor >= 9
 
 # timing
 SECONDS_PER_MIN: int = 60
@@ -48,155 +49,50 @@ def natural_time(duration: Union[int, float]) -> str:
     return natural
 
 
-# class ADutils:
-#     def __init__(
-#         self,
-#         name: str,
-#         config: Dict[str, Any] = {},
-#         ad: AppDaemon = None,
-#         icon: Optional[str] = None,
-#         show_config: bool = False,
-#     ) -> None:
-#         self.name = name
-#         self.ad = ad
-#         self.config = config
-#         self.icon = icon
+class Room:
+    """Class for keeping track of a room."""
 
-#         if self.appdaemon_v3:
-#             warn = {"icon": "‼️", "level": "WARNING"}
-#             self.log(f"", **warn)
-#             self.log(f"  please {hl(f'update to AppDaemon >=4.x')}!", **warn)
-#             self.log(f"  support for AppDaemon <4.x will be removed", **warn)
-#             self.log(f"", **warn)
-#             self.log(f"    info: https://github.com/home-assistant/appdaemon", **warn)
-#             self.log(f"", **warn)
+    def __init__(
+        self,
+        name: str,
+        door_window: Set[str],
+        temperature: Set[str],
+        push_data: Optional[Dict[str, Union[str, int]]] = None,
+        appdaemon: AppDaemon = None
+    ) -> None:
 
-#         if show_config and self.config:
-#             self.show_info()
+        self.name: str = name
+        # door/window sensors of a room
+        self.door_window: Set[str] = door_window
+        # temperature sensors of a room
+        self.temperature: Set[str] = temperature
+        # reminder notification callback handles
+        self.handles: Dict[str, str] = {}
+        # ios push settings
+        self.push_data: Dict[str, Union[str, int]] = push_data
 
-#     @property
-#     def appdaemon_v3(self) -> bool:
-#         return bool(int(self.ad.get_ad_version()[0]) < 4)
+        # callback handles to switch off the lights
+        self.handles_automoli: Set[str] = set()
+        # callback handles for notifreeze notifications
+        self.handles_notifreeze: Set[str] = set()
 
-#     def log(
-#         self, msg: str, icon: Optional[str] = None, *args: Any, **kwargs: Any
-#     ) -> None:
+        # appdaemon instance
+        self._ad = appdaemon
 
-#         kwargs.setdefault("ascii_encode", False)
+    async def indoor(self, nf: Any) -> Optional[float]:
+        indoor_temperatures = set()
+        invalid_sensors = {}
 
-#         if self.appdaemon_v3:
-#             icon = None
-#             kwargs.pop("ascii_encode", None)
+        for sensor in self.temperature:
+            try:
+                indoor_temperatures.add(float(await nf.get_state(sensor)))
+            except ValueError:
+                invalid_sensors[sensor] = await nf.get_state(sensor)
+                continue
 
-#         message = f"{f'{icon} ' if icon else ' '}{msg}"
+        if indoor_temperatures:
+            return fmean(indoor_temperatures)
 
-#         self.ad.log(message, *args, **kwargs)
+        nf.lg(f"{self.name}: No valid values ¯\\_(ツ)_/¯ {invalid_sensors = }")
 
-#     def show_info(self, config: Optional[Dict[str, Any]] = None) -> None:
-#         # check if a room is given
-#         if config:
-#             self.config = config
-
-#         if not self.config:
-#             self.log(f"no configuration available", icon="‼️", level="ERROR")
-#             return
-
-#         room = ""
-#         if "room" in self.config:
-#             room = f" - {hl(self.config['room'].capitalize())}"
-
-#         self.log("")
-#         self.log(f"{hl(self.name)}{room}", icon=self.icon)
-#         self.log("")
-
-#         listeners = self.config.pop("listeners", None)
-
-#         for key, value in self.config.items():
-
-#             # hide "internal keys" when displaying config
-#             if key in ["module", "class"] or key.startswith("_"):
-#                 continue
-
-#             if isinstance(value, list):
-#                 self.print_collection(key, value, 2)
-#             elif isinstance(value, dict):
-#                 self.print_collection(key, value, 2)
-#             else:
-#                 self._print_cfg_setting(key, value, 2)
-
-#         if listeners:
-#             self.log(f"  event listeners:")
-#             for listener in sorted(listeners):
-#                 self.log(f"    - {hl(listener)}")
-
-#         self.log("")
-
-#     def print_collection(
-#         self, key: str, collection: Iterable[Any], indentation: int = 2
-#     ) -> None:
-
-#         self.log(f"{indentation * ' '}{key}:")
-#         indentation = indentation + 2
-
-#         for item in collection:
-#             indent = indentation * " "
-
-#             if isinstance(item, dict):
-#                 if "name" in item:
-#                     self.print_collection(item.pop("name", ""), item, indentation)
-#                 else:
-#                     self.log(f"{indent}{hl(pformat(item, compact=True))}")
-
-#             elif isinstance(collection, dict):
-#                 self._print_cfg_setting(item, collection[item], indentation)
-
-#             else:
-#                 self.log(f"{indent}- {hl(item)}")
-
-#     @staticmethod
-#     def hl(text: Union[int, float, str]) -> str:
-#         return hl(text)
-
-#     @staticmethod
-#     def hl_entity(entity: str) -> str:
-#         return hl_entity(entity)
-
-#     async def get_timezone(self) -> timezone:
-#         return timezone(
-#             timedelta(minutes=self.ad.get_tz_offset()), name=self.ad.get_timezone()
-#         )
-
-#     async def last_update(self, entity: str) -> Any:
-#         lu_date, lu_time = await self.to_localtime(entity, "last_updated")
-#         last_updated = str(lu_time.strftime("%H:%M:%S"))
-#         if lu_date != await self.ad.date():
-#             last_updated = f"{last_updated} ({lu_date.strftime('%Y-%m-%d')})"
-#         return last_updated
-
-#     async def to_localtime(self, entity: str, attribute: str) -> Any:
-#         attributes = await self.ad.get_state(entity_id=entity, attribute="all")
-#         time_utc = datetime.fromisoformat(attributes[attribute])
-#         time_local = time_utc.astimezone(await self.get_timezone())
-#         return (time_local.date(), time_local.time())
-
-#     def _print_cfg_setting(
-#         self, key: str, value: Union[int, str], indentation: int
-#     ) -> None:
-#         unit = prefix = ""
-#         indent = indentation * " "
-
-#         # legacy way
-#         if key == "delay" and isinstance(value, int):
-#             unit = "min"
-#             min_value = f"{int(value / 60)}:{int(value % 60):02d}"
-#             self.log(
-#                 f"{indent}{key}: {prefix}{hl(min_value)}{unit} ≈ " f"{hl(value)}sec"
-#             )
-
-#         else:
-#             if "_units" in self.config and key in self.config["_units"]:
-#                 unit = self.config["_units"][key]
-#             if "_prefixes" in self.config and key in self.config["_prefixes"]:
-#                 prefix = self.config["_prefixes"][key]
-
-#             self.log(f"{indent}{key}: {prefix}{hl(value)}{unit}")
+        return None

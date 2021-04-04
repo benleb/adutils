@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adutils"
-version = "0.5.0-alpha.3"
+version = "0.6.0"
 description = "Helper and utilities for AppDaemon apps."
 authors = ["Ben Lebherz <git@benleb.de>"]
 license = "MIT"
@@ -44,7 +44,7 @@ include_trailing_comma = true
 force_grid_wrap = 0
 
 [tool.black]
-line-length = 120
+line-length = 100
 target_version = ["py39"]
 include = '\.pyi?$'
 exclude = '''
@@ -63,11 +63,3 @@ exclude = '''
   )/
 )
 '''
-
-[tool.dephell.main]
-# read from poetry format
-from = {format = "poetry", path = "pyproject.toml"}
-# drop dev-dependencies
-envs = ["main"]
-# and convert into setup.py
-to = {format = "setuppy", path = "setup.py"}
