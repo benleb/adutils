@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adutils"
-version = "0.6.0"
+version = "0.6.1"
 description = "Helper and utilities for AppDaemon apps."
 authors = ["Ben Lebherz <git@benleb.de>"]
 license = "MIT"
