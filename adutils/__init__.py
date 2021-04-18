@@ -6,7 +6,7 @@
 # from datetime import datetime, timedelta, timezone
 from importlib.metadata import version
 from sys import version_info
-from typing import Any, Dict, Optional, Union, Set
+from typing import Any, Dict, List, Optional, Union, Set
 
 from appdaemon.appdaemon import AppDaemon
 from statistics import fmean
@@ -55,17 +55,26 @@ class Room:
     def __init__(
         self,
         name: str,
-        door_window: Set[str],
-        temperature: Set[str],
+        room_lights: Set[str] = {},
+        motion: Set[str] = {},
+        door_window: Set[str] = {},
+        temperature: Set[str] = {},
         push_data: Optional[Dict[str, Union[str, int]]] = None,
         appdaemon: AppDaemon = None
     ) -> None:
 
         self.name: str = name
-        # door/window sensors of a room
+
+        # all lights in the room
+        self.room_lights: Set[str] = room_lights
+
+        # motion sensors of the room
+        self.motion: Set[str] = motion
+        # door/window sensors of the room
         self.door_window: Set[str] = door_window
-        # temperature sensors of a room
+        # temperature sensors of the room
         self.temperature: Set[str] = temperature
+
         # reminder notification callback handles
         self.handles: Dict[str, str] = {}
         # ios push settings
@@ -78,6 +87,16 @@ class Room:
 
         # appdaemon instance
         self._ad = appdaemon
+
+    @property
+    def lights_dimmable(self) -> List[str]:
+        """Stupid but currently suitable separation..."""
+        return [light for light in self.room_lights if light.startswith("light.")]
+
+    @property
+    def lights_undimmable(self) -> List[str]:
+        """Stupid but currently suitable separation..."""
+        return [light for light in self.room_lights if light.startswith("switch.")]
 
     async def indoor(self, nf: Any) -> Optional[float]:
         indoor_temperatures = set()
